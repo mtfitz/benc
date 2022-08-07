@@ -21,7 +21,7 @@ i32e
 32
 ```
 
-To use this library from a C++ application, please refer to the header `benc.hpp`.
+To use this library in a C++ application, please refer to the header `benc.hpp`.
 
 ## Building
 The library and program can be build using CMake and its supported outputs. From the project root directory, this looks like:
