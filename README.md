@@ -17,4 +17,4 @@ Options:
 To use this library from a C++ application, please refer to the header `benc.hpp`.
 
 ## Building
-The library and program can be build using CMake and its supported outputs. Compilation should work out-of-the-box on POSIX-compatible systems. On Windows, you must ensure the standard header `getopt.h` exists; you can grab it using `vcpkg`.
+The library and program can be build using CMake and its supported outputs. Compilation should work out-of-the-box on POSIX-compatible systems. On Windows, you must ensure the `getopt` library exists; you can grab it using `vcpkg`.
