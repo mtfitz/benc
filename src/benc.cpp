@@ -79,7 +79,7 @@ int main(int argc, char** argv)
     args_t args = args_wrapped.value();
 
     // grab input and setup files, if necessary
-    vector<benc::byte_t> src;
+    vector<benc::byte> src;
     ostream* out = &cout;
 
     if (args.infile.size()) {
@@ -96,7 +96,7 @@ int main(int argc, char** argv)
 
         in.read((char *) src.data(), file_size);
     } else {
-        src = vector<benc::byte_t>(args.source.begin(), args.source.end());
+        src = vector<benc::byte>(args.source.begin(), args.source.end());
     }
 
     // open output file

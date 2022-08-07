@@ -7,27 +7,28 @@
 #include "benc.hpp"
 
 using namespace benc;
-using namespace std;
 
-optional<BencTree> benc::decode(vector<byte_t>& src);
-optional<BencTree> benc::decode(string& src);
+using byte = benc::byte;
 
-optional<BencInt> parse_integer(vector<byte_t>& in)
+std::optional<BencTree> benc::decode(std::vector<byte>& src);
+std::optional<BencTree> benc::decode(std::string& src);
+
+std::optional<BencInt> parse_integer(std::vector<byte>& in)
 {
     // check if minimum size of integer representation (iXe)
     if (in.size() < 3)
         return {};
 
-    vector<byte_t> working_bytes;
+    std::vector<byte> working_bytes;
     if (in[0] != 'i')
         return {};
     working_bytes.push_back(in[0]);
 
     for (auto i = in.begin() + 1; i != in.end(); i++) {
-        byte_t this_byte = *i;
+        byte this_byte = *i;
         working_bytes.push_back(this_byte);
         // break if not valid int (or bounds)
-        if ( (this_byte < 0x30 || this_byte > 0x39) && this_byte != '-')
+        if ( (this_byte < 0x30) || (this_byte > 0x39) && this_byte != '-')
             break;
     }
 
@@ -38,7 +39,6 @@ optional<BencInt> parse_integer(vector<byte_t>& in)
     char sign = false;
     if (working_bytes[1] == '-') {
         sign = true;
-        cout << "negative sign" << endl;
     }
 
     int64_t ten_pow = 1;
@@ -48,7 +48,7 @@ optional<BencInt> parse_integer(vector<byte_t>& in)
         if (got_sign)
             return {};
         
-        byte_t this_digit = *i - 0x30;
+        byte this_digit = *i - 0x30;
         
         // if not a valid digit, check if '-'
         if (this_digit > 0x9) {
@@ -74,7 +74,7 @@ optional<BencInt> parse_integer(vector<byte_t>& in)
     return this_int;
 }
 
-optional<BencString> parse_byte_string(vector<byte_t>& in)
+std::optional<BencString> parse_byte_string(std::vector<byte>& in)
 {
     // ensure minimum string size (a:b)
     if (in.size() < 3) {
@@ -82,7 +82,7 @@ optional<BencString> parse_byte_string(vector<byte_t>& in)
     }
 
     // get string size from first bytes
-    vector<byte_t> count_working_bytes;
+    std::vector<byte> count_working_bytes;
     for (auto i = in.begin(); i != in.end(); i++) {
         if (*i < '0' || *i > '9') { // if not a digit
             if (*i == ':') // stop at ':'
@@ -102,7 +102,7 @@ optional<BencString> parse_byte_string(vector<byte_t>& in)
     size_t count = 0;
     size_t ten_pow = 1;
     for (auto i = count_working_bytes.rbegin(); i != count_working_bytes.rend(); i++) {
-        byte_t this_digit = *i - 0x30;
+        byte this_digit = *i - 0x30;
         count += this_digit * ten_pow;
         ten_pow *= 10;
     }
@@ -114,7 +114,7 @@ optional<BencString> parse_byte_string(vector<byte_t>& in)
         return {};
     
     // get byte string
-    vector<byte_t> byte_string;
+    std::vector<byte> byte_string;
     byte_string.reserve(count);
     size_t bytes_remaining = count;
     for (auto i = in.begin() + count_working_bytes.size() + 1; i != in.end(); i++) {
@@ -133,7 +133,7 @@ optional<BencString> parse_byte_string(vector<byte_t>& in)
     return byte_string;
 }
 
-optional<BencList> parse_list(vector<byte_t>& in)
+std::optional<BencList> parse_list(std::vector<byte>& in)
 {
     // ensure minimum list size (lXe)
     if (in.size() < 3) {
@@ -148,7 +148,7 @@ optional<BencList> parse_list(vector<byte_t>& in)
     in.erase(in.begin(), in.begin() + 1);
     
     // parse until list end
-    vector<BencTree> list_nodes;
+    std::vector<BencTree> list_nodes;
     while (true) {
         // first check if list is done
         if (in.size() > 0 && in[0] == 'e') {
@@ -168,7 +168,7 @@ optional<BencList> parse_list(vector<byte_t>& in)
     return list_nodes;
 }
 
-optional<BencDict> parse_dict(vector<byte_t>& in)
+std::optional<BencDict> parse_dict(std::vector<byte>& in)
 {
     // ensure minimum dictionary size (dXe)
     if (in.size() < 3) {
@@ -182,7 +182,7 @@ optional<BencDict> parse_dict(vector<byte_t>& in)
     // remove 'd'
     in.erase(in.begin(), in.begin() + 1);
 
-    map<BencString, BencTree> dict;
+    std::map<BencString, BencTree> dict;
     while (true) {
         // first check if dictionary is done
         if (in.size() > 0 && in[0] == 'e') {
@@ -203,7 +203,7 @@ optional<BencDict> parse_dict(vector<byte_t>& in)
     return dict;
 }
 
-optional<BencTree> benc::decode(vector<byte_t>& src)
+std::optional<BencTree> benc::decode(std::vector<byte>& src)
 {
     // try to parse integer
     auto parsed_integer = parse_integer(src);
@@ -234,10 +234,10 @@ optional<BencTree> benc::decode(vector<byte_t>& src)
     return {};
 }
 
-optional<BencTree> benc::decode(string& src)
+std::optional<BencTree> benc::decode(std::string& src)
 {
-    vector<byte_t> src_vec(src.begin(), src.end());
-    optional<BencTree> result(benc::decode(src_vec));
-    src = string(src_vec.begin(), src_vec.end());
+    std::vector<byte> src_vec(src.begin(), src.end());
+    std::optional<BencTree> result(benc::decode(src_vec));
+    src = std::string(src_vec.begin(), src_vec.end());
     return result;
 }

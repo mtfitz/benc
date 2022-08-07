@@ -7,44 +7,45 @@
 #include "benc.hpp"
 
 using namespace benc;
-using namespace std;
 
-optional<vector<byte_t>> benc::encode(BencTree& tree);
-optional<string> benc::encode_string(BencTree& tree);
+using byte = benc::byte;
 
-optional<vector<byte_t>> encode_integer(BencTree& tree)
+std::optional<std::vector<byte>> benc::encode(BencTree& tree);
+std::optional<std::string> benc::encode_string(BencTree& tree);
+
+std::optional<std::vector<byte>> encode_integer(BencTree& tree)
 {
     if (tree.type() != BencType::INT) {
         return {};
     }
 
-    string result_str = "i" + to_string(tree.get_int()) + "e";
-    vector<byte_t> result(result_str.begin(), result_str.end());
+    std::string result_str = "i" + std::to_string(tree.get_int()) + "e";
+    std::vector<byte> result(result_str.begin(), result_str.end());
 
     return result;
 }
 
-optional<vector<byte_t>> encode_byte_string(BencTree& tree)
+std::optional<std::vector<byte>> encode_byte_string(BencTree& tree)
 {
     if (tree.type() != BencType::STRING) {
         return {};
     }
 
     BencString& str_vec = tree.get_byte_string();
-    string prefix = to_string(str_vec.size()) + ":";
-    vector<byte_t> result(prefix.begin(), prefix.end());
+    std::string prefix = std::to_string(str_vec.size()) + ":";
+    std::vector<byte> result(prefix.begin(), prefix.end());
     result.insert(result.end(), str_vec.begin(), str_vec.end());
 
     return result;
 }
 
-optional<vector<byte_t>> encode_list(BencTree& tree)
+std::optional<std::vector<byte>> encode_list(BencTree& tree)
 {
     if (tree.type() != BencType::LIST) {
         return {};
     }
 
-    vector<byte_t> result;
+    std::vector<byte> result;
     result.push_back('l');
     BencList& this_list = tree.get_list();
     for (auto& x : this_list) {
@@ -60,13 +61,13 @@ optional<vector<byte_t>> encode_list(BencTree& tree)
     return result;
 }
 
-optional<vector<byte_t>> encode_dict(BencTree& tree)
+std::optional<std::vector<byte>> encode_dict(BencTree& tree)
 {
     if (tree.type() != BencType::DICT) {
         return {};
     }
 
-    vector<byte_t> result;
+    std::vector<byte> result;
     result.push_back('d');
     BencDict& this_dict = tree.get_dict();
     for (auto x : this_dict) {
@@ -93,7 +94,7 @@ optional<vector<byte_t>> encode_dict(BencTree& tree)
     return result;
 }
 
-std::optional<std::vector<byte_t>> benc::encode(BencTree& tree)
+std::optional<std::vector<byte>> benc::encode(BencTree& tree)
 {
     auto encoded_result = encode_integer(tree);
     if (encoded_result) {
@@ -115,12 +116,12 @@ std::optional<std::vector<byte_t>> benc::encode(BencTree& tree)
     return {};
 }
 
-optional<string> benc::encode_string(BencTree& tree)
+std::optional<std::string> benc::encode_string(BencTree& tree)
 {
     auto result = encode(tree);
     if (!result) {
         return {};
     }
     auto result_unwrapped = result.value();
-    return string(result_unwrapped.begin(), result_unwrapped.end());
+    return std::string(result_unwrapped.begin(), result_unwrapped.end());
 }

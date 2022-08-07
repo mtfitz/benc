@@ -6,4 +6,8 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 set(CMAKE_CXX_STANDARD 17)
 
+if(WIN32)
+    find_package(getopt)
+endif()
+
 add_subdirectory(src)
