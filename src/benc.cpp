@@ -61,7 +61,7 @@ optional<args_t> get_args(int argc, char** argv)
 
 void print_usage()
 {
-    cout << "Usage: benc [OPTIONS] input_text" << endl;
+    cout << "Usage: benc-cli [OPTIONS] input_text" << endl;
     cout << "Options:" << endl;
     cout << "\t-i FILE\t\tuse input file, instead of STDIN" << endl;
     cout << "\t-o FILE\t\tuse output file, instead of STDOUT" << endl;
