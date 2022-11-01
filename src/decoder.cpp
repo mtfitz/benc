@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "benc.hpp"
+#include "benc/benc.hpp"
 
 using namespace benc;
 

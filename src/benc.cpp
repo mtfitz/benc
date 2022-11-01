@@ -1,4 +1,4 @@
-#include "benc.hpp"
+#include "benc/benc.hpp"
 
 #include <fstream>
 #include <iostream>

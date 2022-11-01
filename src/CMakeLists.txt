@@ -1,4 +1,7 @@
-include_directories(${BENC_SOURCE_DIR}/include/)
+#include_directories(${BENC_SOURCE_DIR}/include)
+#include_directories(${BENC_SOURCE_DIR}/include/benc)
 add_library(benc decoder.cpp encoder.cpp tree.cpp)
 add_executable(benc-cli benc.cpp)
 target_link_libraries(benc-cli benc)
+target_include_directories(benc PUBLIC ../include)
+target_include_directories(benc-cli PUBLIC ../include)
